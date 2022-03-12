@@ -114,14 +114,14 @@ foreach ($Result as $row)
 	$ParsedPos=ltrim($ParsedPos,'POINTpoint ('); //remove leading spaces and "POINT (" introduction from WKT  
 	$GeoCoord=explode(' ', $ParsedPos);//parse WKT into coordinates 
 	//calculate coordinates in map image
-	$PlantXCoord=($GeoCoord[0]-$MapFrame[MIN_LON]);
-	$PlantYCoord=($MapHeight-($GeoCoord[1]-$MapFrame[MIN_LAT]));
+	$LocXCoord=($GeoCoord[0]-$MapFrame[MIN_LON]);
+	$LocYCoord=($MapHeight-($GeoCoord[1]-$MapFrame[MIN_LAT]));
 
 
 //draw the clickable point marker:
 
 	echo('<a id="Map_' . str_replace(' ','_',htmlentities($row[$LinkNameField1] .'__'. $row[$LinkNameField2])) . '" xlink:href="#Text_' . str_replace(' ','_',htmlentities($row[$LinkNameField1] .'__'. $row[$LinkNameField2])) . '" >'); //for the anchor name, we use the content of the fields defined in the config sction in $LinkNameField 
-	drawmarker($colorcode=$row["ResNum"],$sizeInPercent=4,$AspectRa=$MapAspectRa,$x=$PlantXCoord,$y=$PlantYCoord); //the marker will have a size of 4% of the whole map
+	drawmarker($colorcode=$row["ResNum"],$sizeInPercent=4,$AspectRa=$MapAspectRa,$x=$LocXCoord,$y=$LocYCoord); //the marker will have a size of 4% of the whole map
 
 echo('</a>');
 }
