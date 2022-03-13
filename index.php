@@ -37,7 +37,7 @@ $PrintOutFields=['location','time'];
 $ReportGeoCoords=True;
 //
 // Map file:
-$MapFileName='5627748.4688-32483049.3830-5629627.5885-32485142.7695-1954x1754-ExampleMap_MaNoFestival_2017.png';
+$MapFileName='5627715.8274-482913.1466-5629758.5139-485235.8787-1736x1736-epsg25832-ExampleMap_MaNoFestival_2017.png';
 // MapFileName must be in format "MIN_LAT-MIN_LON-MAX_LAT-MAX_LON-WIDTHINPIXELSxHEIGHTINPIXELS-otherstuff-whatever.extension" !
 // Description text for map:
 $MapDescription='This is a sample map!';
@@ -98,7 +98,7 @@ $MapAspectRa=$MapResolution[0]/$MapResolution[1];
 
 <!-- Draw the Map: -->
 
-<svg id="Map" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="700" height="1100" viewBox="0 0 <?php echo($MapWidth*$MapAspectRa .' '. $MapHeight); ?>" align="top">  
+<svg id="Map" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="700" viewBox="0 0 <?php echo($MapWidth*$MapAspectRa .' '. $MapHeight); ?>" align="top">  
 <desc> <?php $MapDescription; ?> <br> </desc>
 <image x="0" y="0" width="<?php echo($MapWidth*$MapAspectRa);?>" height="<?php echo($MapHeight);?>" xlink:href= <?php echo($MapFileName);?> preserveAspectRation="XMinYMin meet">
 </image>
@@ -148,9 +148,9 @@ echo('</svg>');
 	echo($row["ResNum"]. ". "  .$row[$FieldToSearch] .'<br>');
 echo('</a>');
 
-// In the config section, we defined which fields of the retrieved items to print to the screen. We do this only if not empty.
+// In the config section, we defined which fields of the retrieved items to print to the screen. We print them only if not empty. We print them alnong with the field name, set to normal case with "ucfirst".
 	foreach ($PrintOutFields as $index){	
-		if ($row[$index] != '') varOutput($row[$index],$index);
+		if ($row[$index] != '') varOutput($row[$index],ucfirst($index));
 	}
 
 // In case we want the geographical coordinates printed:
