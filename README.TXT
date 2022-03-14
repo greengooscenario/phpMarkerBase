@@ -23,7 +23,7 @@ functioncollection.php  --Some subroutines that are independent from the main pr
 
 ExampleData-MaNoFestival_2017.sqlite  --Example database file
 
-5627748.4688-32483049.3830-5629627.5885-32485142.7695-1954x1754-ExampleMap_MaNoFestival_2017.png  --Example map file
+5627715.8274-482913.1466-5629758.5139-485235.8787-1736x1736-epsg25832-ExampleMap_MaNoFestival_2017.png  --Example map file
 
 
 How to create the database
