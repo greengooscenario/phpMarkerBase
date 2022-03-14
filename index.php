@@ -34,7 +34,7 @@ $LinkNameField2='2';
 // The database fields you want to print out for each retrieved item besides the field you want to search in (inexistant indices will throw a notice):
 $PrintOutFields=['location','time'];
 // Do you want to report an item's geographical coordinates to the user?
-$ReportGeoCoords=True;
+$ReportGeoCoords=False;
 //
 // Map file:
 $MapFileName='5627715.8274-482913.1466-5629758.5139-485235.8787-1736x1736-epsg25832-ExampleMap_MaNoFestival_2017.png';
@@ -70,7 +70,7 @@ $MapAspectRa=$MapResolution[0]/$MapResolution[1];
 </form>
 
 <?php
-	echo("<p>Looking for " . $_GET['finder'] . '...</p>');
+	echo("<p>Looking for <b>" . $_GET['finder'] . '</b>...</p>');
 ?>
 <hr>
 

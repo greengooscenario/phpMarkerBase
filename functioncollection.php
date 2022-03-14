@@ -1,7 +1,7 @@
 <?php
 
 function varOutput($vari,$bez='Variable'){
-	echo('<p>'. $bez .': '. $vari .'</p>');
+	echo('<br>'. $bez .': '. $vari .'<br>');
 }
 
 function outp($vari){
