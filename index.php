@@ -1,18 +1,25 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Location finder</title>
-  </head>
-
-<body>
-<h1>Find location of...</h1>
-
 <?php
 include("./functioncollection.php");
 //////////////////////////////////////////////////////////////////////////
 //                          CONFIGURATION
+//
+// Accompanying text output
+//
+// Language code for the page:
+$LanguageCode='en';
+// Page title:
+$PageTitle='Locator';
+// Heading in the page's top:
+$FirstHeading='Find location of';
+// Paragraph above the input form:
+$AboveForm='Here you can enter what you are looking for!';
+// The input form's prompt:
+$FinderPrompt='Locate:';
+// Text on the finder button:
+$FinderButtonText='Find!';
+// Paragraph below the input form:
+$BelowForm='';
+//
 //
 // Names of the accessory files, relative to working directory:
 //
@@ -62,15 +69,31 @@ $MapAspectRa=$MapResolution[0]/$MapResolution[1];
 
 ?>
 
+<!doctype html>
+<html lang="<?php echo($LanguageCode); ?>">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><?php echo($PageTitle); ?></title>
+</head>
+
+
+<body>
+
+<h1><?php echo($FirstHeading); ?></h1>
+<p><?php echo($AboveForm); ?></p>
+
 <!-- The Input Form: -->
 <form action="http://localhost:8080/">
-  <label for="finderform">Find:</label>
+<label for="finderform"><?php echo($FinderPrompt); ?></label>
   <input type="search" id="finderform" name="finder">
-  <button>Locate...</button>
+  <button><?php echo($FinderButtonText); ?></button>
 </form>
 
+<p><?php echo($BelowForm); ?></p>
+
 <?php
-	echo("<p>Looking for <b>" . $_GET['finder'] . '</b>...</p>');
+	echo("<p>Locating <b>" . $_GET['finder'] . '</b>...</p>');
 ?>
 <hr>
 
