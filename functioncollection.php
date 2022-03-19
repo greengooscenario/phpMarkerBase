@@ -1,4 +1,5 @@
 <?php
+//copyright (c) 2021-2022 Matthias P. F. Jacobs -- see LICENSE
 
 function varOutput($vari,$bez='Variable'){
 	echo('<br>'. $bez .': '. $vari .'<br>');
