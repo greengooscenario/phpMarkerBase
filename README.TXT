@@ -21,7 +21,7 @@ web map on your web site, providing some of the functionality of systems like
 Google Maps or OpenStreetMap for a limited area.
 
 It has been designed with application scenarios in mind like letting web site
-users search for trees in a botanical garden, sites in a city or the stage
+users search for trees in a botanic garden, sites in a city or the stage
 where a band will play during a festival.
 
 phpMarkerBase is a piece of php code that lets the user search for
