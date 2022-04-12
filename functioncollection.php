@@ -57,16 +57,6 @@ function drawmarker($colorcode,$sizeInPercent=100,$AspectRa=1,$x=0,$y=0)
 	echo(' height="');
 		echo((0.75*$sizeInPercent*$AspectRa) . '%" />');
  	
-/*	echo('<rect x="'); // arrow test
-       		echo($x*$AspectRa);
-	echo('" ');
-	echo('y="');
-       		echo($y);
-	echo('" fill="#0ff" ');
-	       	echo("opacity=\" $opacity \" width=\"1%\"");
-       		echo('height="' . $sizeInPercent*$AspectRa . '%" />');
- */
-
 
 	echo('<rect x="'); //white arrow backdrop
        		echo($x*$AspectRa);

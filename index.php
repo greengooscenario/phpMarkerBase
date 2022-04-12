@@ -1,7 +1,22 @@
+<!-- Copyright (c) 2021-2022 Matthias P. F. Jacobs - see LICENSE -->
+
 <?php
-//copyright (c) 2021-2022 Matthias P. F. Jacobs -- see LICENSE 
 include("./functioncollection.php");
 include("./config.php");
+?>
+
+<!doctype html>
+<html lang="<?php echo($LanguageCode); ?>">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><?php echo($PageTitle); ?></title>
+</head>
+
+<body>
+
+
+<?php
 
 //Prepare the Map:
 	$MapFrame=explode('-',$MapFileName);
@@ -15,18 +30,104 @@ $MapHeight = $MapFrame[MAX_LAT]-$MapFrame[MIN_LAT];
 $MapResolution=explode('x',$MapFrame[RESOLUTION]);
 $MapAspectRa=$MapResolution[0]/$MapResolution[1];
 
+// Open the database defined in config.php:
+try {
+	$db = new \PDO("sqlite:$DataBaseFileName");
+} 
+catch(\Exception $e) {
+	echo('<br> Database error');
+	 if($debuglvl>0)
+	{	echo(': ' . $e);
+		echo('<br> Please check $DataBaseFileName definition! 
+		<br>XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
+	}
+}
+
+
+if($MyTable==""){  //Table name not explicitly given, try to autodetect
+
+	if($debuglvl>1) echo('<br>Autodetecting $GeoTable...');
+
+	$GeoTabQuery = $db->prepare("select f_table_name from geometry_columns ;"); //prepare to query the field "f_table_name" from the table "geometry_colums"
+	try {
+		$GeoTabQuery->execute();
+	}catch(\Exception $e) { // table or field not found
+		echo('<br>Database error!');
+		 if($debuglvl>0) echo('<br> Error '.$e.' - Could not autodetect geographic table in the given database file. Please define $MyTable explicitly or check $DataBaseFileName!');
+	}	
+	$GeoTableCount=0; // just to clarify
+	foreach($GeoTabQuery as $L1entry){  //read out the results
+		if($debuglvl>1) 
+		{	echo('<br>L1entry: ');
+			var_dump($L1entry);
+		}
+		foreach($L1entry as $L2entry){
+			if($debuglvl>1)
+			{	echo('<br>L2entry: ');
+				var_dump($L2entry);
+			}	
+			if($L2entry <> $MyTable)
+			{	$MyTable=$L2entry;
+				$GeoTableCount++;
+				 if($debuglvl>1)
+                        	{ 	echo('<br>Set $MyTable to '.$MyTable);
+					echo('<br>We have now: '.$GeoTableCount);
+				}
+			}
+		}
+	}
+	 if($GeoTableCount<>1) echo('<br> Database error');
+
+	 if($debuglvl>0)
+	{	if($debuglvl>1) varOutput($GeoTableCount,'Number of geographic tables');
+		if($GeoTableCount==0) echo('<br>could not autodetect geographic table in the given database file - please define $MyTable explicitly or check $DataBaseFileName!');
+		if($GeoTableCount>1) echo('<br>database file seems to contain more than one geographic tables - please define $MyTable explicitly or check $DataBaseFileName!');
+	}
+}
+
+
+if($WKTGeoField=="")
+{  //Geo Coordinates field not explicitly given, try to autodetect
+	 if($debuglvl>1) echo('<br>Autodetecting $WKTGeoField...');
+	$GeoFieldQuery = $db->prepare("select f_geometry_column from geometry_columns ;");
+	try 
+	{	$GeoFieldQuery->execute();
+	}catch(\Exception $e) {
+		if($debuglvl>0) echo('<br> Warning: Database query error '.$e.' - Could not autodetect geographic coordinates field in the given database file; assuming $WKTGeoField=WKT_GEOMETRY <br> Please consider defining $WKTGeoField explicitly or check $DataBaseFileName!');
+	}
+	$GeoFieldCount=0; // just to clarify
+	foreach($GeoFieldQuery as $L1field){
+		if($debuglvl>1)
+                {	echo('<br>L1field: ');
+			var_dump($L1field);
+		}
+		foreach($L1field as $L2field){
+			if($debuglvl>1)
+                        {	echo('<br>L2field: ');
+				var_dump($L2field);
+			}
+			if($L2field <> $WKTGeoField) {
+				$WKTGeoField=$L2field;
+				$GeoFieldCount++;
+				 if($debuglvl>1)
+                                {	echo('<br>Set $WKTGeoField to '.$WKTGeoField);
+					echo('<br>We have now: '.$GeoFieldCount);
+				}
+			}
+		}
+	}
+
+	 if($debuglvl>0)
+	{	if($debuglvl>1) varOutput($GeoFieldCount,'Number of geographic coordinates columns');
+		if($GeoFieldCount==0) echo('<br>could not autodetect geographic coordinates column in the given database file, assuming $WKTGeoField=WKT_GEOMETRY  <br>- please consider defining $WKTGeoField explicitly or check $DataBaseFileName!');
+		if($GeoTableCount>1) echo('<br>database file seems to contain more than one geographic tables, will use $WKTGeoField='.$WKTGeoField .' <br>- please consider defining $WKTGeoField explicitly or check $DataBaseFileName!');
+	}
+
+	if($WKTGeoField=='') //autodetection did not work
+	{	$WKTGeoField='WKT_GEOMETRY'; // fall back to a guess!
+	}
+}
 ?>
-
-<!doctype html>
-<html lang="<?php echo($LanguageCode); ?>">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?php echo($PageTitle); ?></title>
-</head>
-
-
-<body>
 
 <h1><?php echo($FirstHeading); ?></h1>
 <p><?php echo($AboveForm); ?></p>
@@ -46,13 +147,6 @@ $MapAspectRa=$MapResolution[0]/$MapResolution[1];
 <hr>
 
 <?php
-	// name of the database file has been configured above
-	try {
-  		$db = new \PDO("sqlite:$DataBaseFileName");
-	} catch(\Exception $e) {
-		echo('Error when opening database: ' . $e . ' ...out.');
-		echo('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
-	}
 
 	// we formulate the SQL query statement:
 	$MyQuery = $db->prepare("select * from " . $MyTable . " where " . $FieldToSearch . " like ?;");
@@ -91,7 +185,7 @@ foreach ($Result as $row)
 
 //draw the clickable point marker:
 
-	echo('<a id="Map_' . str_replace(' ','_',htmlentities($row[$LinkNameField1] .'__'. $row[$LinkNameField2])) . '" xlink:href="#Text_' . str_replace(' ','_',htmlentities($row[$LinkNameField1] .'__'. $row[$LinkNameField2])) . '" >'); //for the anchor name, we use the content of the fields defined in the config sction in $LinkNameField 
+	echo('<a id="Map_' . str_replace(' ','_',htmlentities($row["ResNum"].'_'.$row[$LinkNameField1] .'_'. $row[$LinkNameField2])) . '" xlink:href="#Text_' . str_replace(' ','_',htmlentities($row["ResNum"].'_'.$row[$LinkNameField1] .'_'. $row[$LinkNameField2])) . '" >'); //for the anchor name, we use the content of the fields defined in the config sction in $LinkNameField 
 	drawmarker($colorcode=$row["ResNum"],$sizeInPercent=4,$AspectRa=$MapAspectRa,$x=$LocXCoord,$y=$LocYCoord); //the marker will have a size of 4% of the whole map
 
 echo('</a>');
@@ -108,7 +202,7 @@ echo('</a>');
 foreach ($Result as $row)
 {	// uncomment for debugging:
 	//var_dump($row);
-	echo('<a id="Text_' . str_replace(' ','_',htmlentities($row[$LinkNameField1].'__'.$row[$LinkNameField2])) . '" href="#Map_' . str_replace(' ','_',htmlentities($row[$LinkNameField1].'__'.$row[$LinkNameField2])) . '" >'); 
+	echo('<a id="Text_' . str_replace(' ','_',htmlentities($row["ResNum"].'_'.$row[$LinkNameField1].'_'.$row[$LinkNameField2])) . '" href="#Map_' . str_replace(' ','_',htmlentities($row["ResNum"].'_'. $row[$LinkNameField1] .'_'.$row[$LinkNameField2])) . '" >'); 
 	
 	echo('<p>');
 
@@ -119,7 +213,7 @@ echo('</svg>');
 	echo($row["ResNum"]. ". "  .$row[$FieldToSearch] .'<br>');
 echo('</a>');
 
-// In the config section, we defined which fields of the retrieved items to print to the screen. We print them only if not empty. We print them alnong with the field name, set to normal case with "ucfirst".
+// In the config section, we defined which fields of the retrieved items to print. We print them only if not empty. We print them along with the field name, set to normal case with "ucfirst".
 	foreach ($PrintOutFields as $index){	
 		if ($row[$index] != '') varOutput($row[$index],ucfirst($index));
 	}
