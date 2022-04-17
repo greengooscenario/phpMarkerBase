@@ -124,7 +124,7 @@ if($WKTGeoField=="")
 	}
 
 	if($WKTGeoField=='') //autodetection did not work
-	{	$WKTGeoField='WKT_GEOMETRY'; // fall back to a guess!
+	{	$WKTGeoField='WKT_GEOMETRY'; // fall back to guesswork
 	}
 }
 ?>
@@ -214,9 +214,17 @@ echo('</svg>');
 echo('</a>');
 
 // In the config section, we defined which fields of the retrieved items to print. We print them only if not empty. We print them along with the field name, set to normal case with "ucfirst".
-	foreach ($PrintOutFields as $index){	
+/*	foreach ($PrintOutFields as $index){	
 		if ($row[$index] != '') varOutput($row[$index],ucfirst($index));
+}
+ */
+echo('<p>');
+foreach ($PrintOutFields as $FieldLabel => $FieldName)
+{	if ($row[$FieldName] != '') 
+	{	echo($FieldLabel .' '. $row[$FieldName].'<br>');
 	}
+}
+echo('</p>');
 
 // In case we want the geographical coordinates printed:
 	if ($ReportGeoCoords) {

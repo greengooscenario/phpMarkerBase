@@ -40,10 +40,10 @@ $FieldToSearch='act';
 //$WKTGeoField='WKT_GEOMETRY';
 //
 // The database fields you want to use as anchor names for map markers and output rows (to make links names more meaningful - leave unset if in doubt):
-//$LinkNameField1='0';
-//$LinkNameField2='2';
-// Additional database fields to print out for each retrieved item (inexistant field names will throw a notice):
-$PrintOutFields=['location','time'];
+//$LinkNameField1='act';
+//$LinkNameField2='time';
+// Additional database fields to print out for each retrieved item (you can define a label by defining a custom key, e.g. ['Label' => 'field name'] -- inexistant field names will throw a notice):
+$PrintOutFields=['Where:'=>'location','When:'=>'time'];
 // Do you want to report an item's geographical coordinates to the user?
 $ReportGeoCoords=False;
 //
