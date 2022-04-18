@@ -219,8 +219,9 @@ echo('</a>');
 }
  */
 echo('<p>');
-foreach ($PrintOutFields as $FieldLabel => $FieldName)
-{	if ($row[$FieldName] != '') 
+foreach ($PrintOutFields as $FieldLabel =>$FieldName)
+{	if (is_int($FieldLabel)) $FieldLabel=''; 	
+	if ($row[$FieldName] != '') 
 	{	echo($FieldLabel .' '. $row[$FieldName].'<br>');
 	}
 }

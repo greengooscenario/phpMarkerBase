@@ -44,6 +44,7 @@ $FieldToSearch='act';
 //$LinkNameField2='time';
 // Additional database fields to print out for each retrieved item (you can define a label by defining a custom key, e.g. ['Label' => 'field name'] -- inexistant field names will throw a notice):
 $PrintOutFields=['Where:'=>'location','When:'=>'time'];
+//$PrintOutFields=['location','time'];
 // Do you want to report an item's geographical coordinates to the user?
 $ReportGeoCoords=False;
 //
