@@ -5,13 +5,8 @@ phpMarkerBase
 a snippet of php code that acts as a tiny web map / geographic database
 application
 
- > Download the distribution: 
-https://github.com/greengooscenario/phpMarkerBase/archive/refs/heads/main.zip
 
- > Check out the repository: 
-https://github.com/greengooscenario/phpMarkerBase
-
-phpMarkerBase is (c) 2021/2022 Matthias P. F. Jacobs
+phpMarkerBase is (c) 2021 - 2025 Matthias P. F. Jacobs; see file LICENSE
 
 
 ### What does it do?
