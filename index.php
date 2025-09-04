@@ -133,7 +133,7 @@ if($WKTGeoField=="")
 <p><?php echo($AboveForm); ?></p>
 
 <!-- The Input Form: -->
-<form action="http://localhost:8080/">
+<form>
 <label for="finderform"><?php echo($FinderPrompt); ?></label>
   <input type="search" id="finderform" name="finder">
   <button><?php echo($FinderButtonText); ?></button>
