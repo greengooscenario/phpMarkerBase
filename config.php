@@ -49,7 +49,7 @@ $PrintOutFields=['Where:'=>'location','When:'=>'time'];
 $ReportGeoCoords=False;
 //
 // Map file:
-$MapFileName='5627715.8274-482913.1466-5629758.5139-485235.8787-1736x1736-epsg25832-ExampleMap_MaNoFestival_2017.png';
+$MapFileName='5627715.8274-482913.1466-5629758.5139-485235.8787-1736x1736-epsg25832-ExampleMap.png';
 // MapFileName must be in format "MIN_LAT-MIN_LON-MAX_LAT-MAX_LON-WIDTHINPIXELSxHEIGHTINPIXELS-otherstuff-whatever.extension" !
 // Description text for map:
 $MapDescription='This is a sample map!';
