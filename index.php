@@ -38,7 +38,7 @@ catch(\Exception $e) {
 	echo('<br> Database error');
 	 if($debuglvl>0)
 	{	echo(': ' . $e);
-		echo('<br> Please check $DataBaseFileName definition! 
+		echo('<br> Please check $DataBaseFileName definition in config.php! 
 		<br>XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
 	}
 }
@@ -80,53 +80,56 @@ if($MyTable==""){  //Table name not explicitly given, try to autodetect
 
 	 if($debuglvl>0)
 	{	if($debuglvl>1) varOutput($GeoTableCount,'Number of geographic tables');
-		if($GeoTableCount==0) echo('<br>could not autodetect geographic table in the given database file - please define $MyTable explicitly or check $DataBaseFileName!');
-		if($GeoTableCount>1) echo('<br>database file seems to contain more than one geographic tables - please define $MyTable explicitly or check $DataBaseFileName!');
+		if($GeoTableCount==0) echo('<br>could not autodetect geographic table in the given database file - please define $MyTable explicitly or check $DataBaseFileName in config.php!');
+		if($GeoTableCount>1) echo('<br>database file seems to contain more than one geographic tables - please define $MyTable explicitly or check $DataBaseFileName in config.php!');
 	}
 }
 
-
-if($WKTGeoField=="")
-{  //Geo Coordinates field not explicitly given, try to autodetect
-	 if($debuglvl>1) echo('<br>Autodetecting $WKTGeoField...');
-	$GeoFieldQuery = $db->prepare("select f_geometry_column from geometry_columns ;");
-	try 
-	{	$GeoFieldQuery->execute();
-	}catch(\Exception $e) {
-		if($debuglvl>0) echo('<br> Warning: Database query error '.$e.' - Could not autodetect geographic coordinates field in the given database file; assuming $WKTGeoField=WKT_GEOMETRY <br> Please consider defining $WKTGeoField explicitly or check $DataBaseFileName!');
-	}
-	$GeoFieldCount=0; // just to clarify
-	foreach($GeoFieldQuery as $L1field){
-		if($debuglvl>1)
-                {	echo('<br>L1field: ');
-			var_dump($L1field);
+if($LatField=="" or $LonField=="")
+{
+	if($WKTGeoField=="")
+	{  //Geo Coordinates field not explicitly given, try to autodetect
+		 if($debuglvl>1) echo('<br>Autodetecting $WKTGeoField...');
+		$GeoFieldQuery = $db->prepare("select f_geometry_column from geometry_columns ;");
+		try 
+		{	$GeoFieldQuery->execute();
+		}catch(\Exception $e) {
+			if($debuglvl>0) echo('<br> Warning: Database query error '.$e.' - Could not autodetect geographic coordinates field in the given database file; assuming $WKTGeoField=WKT_GEOMETRY <br> Please consider defining $WKTGeoField explicitly or check $DataBaseFileName!');
 		}
-		foreach($L1field as $L2field){
+		$GeoFieldCount=0; // just to clarify
+		foreach($GeoFieldQuery as $L1field){
 			if($debuglvl>1)
-                        {	echo('<br>L2field: ');
-				var_dump($L2field);
+					{	echo('<br>L1field: ');
+				var_dump($L1field);
 			}
-			if($L2field <> $WKTGeoField) {
-				$WKTGeoField=$L2field;
-				$GeoFieldCount++;
-				 if($debuglvl>1)
-                                {	echo('<br>Set $WKTGeoField to '.$WKTGeoField);
-					echo('<br>We have now: '.$GeoFieldCount);
+			foreach($L1field as $L2field){
+				if($debuglvl>1)
+							{	echo('<br>L2field: ');
+					var_dump($L2field);
+				}
+				if($L2field <> $WKTGeoField) {
+					$WKTGeoField=$L2field;
+					$GeoFieldCount++;
+					 if($debuglvl>1)
+									{	echo('<br>Set $WKTGeoField to '.$WKTGeoField);
+						echo('<br>We have now: '.$GeoFieldCount);
+					}
 				}
 			}
 		}
-	}
 
-	 if($debuglvl>0)
-	{	if($debuglvl>1) varOutput($GeoFieldCount,'Number of geographic coordinates columns');
-		if($GeoFieldCount==0) echo('<br>could not autodetect geographic coordinates column in the given database file, assuming $WKTGeoField=WKT_GEOMETRY  <br>- please consider defining $WKTGeoField explicitly or check $DataBaseFileName!');
-		if($GeoTableCount>1) echo('<br>database file seems to contain more than one geographic tables, will use $WKTGeoField='.$WKTGeoField .' <br>- please consider defining $WKTGeoField explicitly or check $DataBaseFileName!');
-	}
+		 if($debuglvl>0)
+		{	if($debuglvl>1) varOutput($GeoFieldCount,'Number of geographic coordinates columns');
+			if($GeoFieldCount==0) echo('<br>could not autodetect geographic coordinates column in the given database file, assuming $WKTGeoField=WKT_GEOMETRY  <br>- please check $DataBaseFileName in conifg.php, and consider defining $WKTGeoField or $LatField and $LonField explicitly');
+			if($GeoTableCount>1) echo('<br>database file seems to contain more than one geographic tables, will use $WKTGeoField='.$WKTGeoField .' <br>- please consider defining $WKTGeoField explicitly or check $DataBaseFileName!');
+		}
 
-	if($WKTGeoField=='') //autodetection did not work
-	{	$WKTGeoField='WKT_GEOMETRY'; // fall back to guesswork
+		if($WKTGeoField=='') //autodetection did not work
+		{	$WKTGeoField='WKT_GEOMETRY'; // fall back to guesswork
+		}
 	}
 }
+
 ?>
 
 <h1><?php echo($FirstHeading); ?></h1>
@@ -171,16 +174,20 @@ if($WKTGeoField=="")
 <?php
 
 foreach ($Result as $row)
-{	
-	//The coordinates must be in "Well Known Text" (WKT) format, e.g.:
-	//'POINT (8.80906944444444 50.8027944444444 0)'
-	
-	$ParsedPos=rtrim($row[$WKTGeoField],') '); //remove trailing spaces and ')' from WKT 
-	$ParsedPos=ltrim($ParsedPos,'POINTpoint ('); //remove leading spaces and "POINT (" introduction from WKT  
-	$GeoCoord=explode(' ', $ParsedPos);//parse WKT into coordinates 
+{
+	if($LatField=="" or $LonField=="")
+	{	
+		//The coordinates seem to be in "Well Known Text" (WKT) format, e.g.:
+		//'POINT (8.80906944444444 50.8027944444444 0)'	
+		$ParsedPos=rtrim($row[$WKTGeoField],') '); //remove trailing spaces and ')' from WKT 
+		$ParsedPos=ltrim($ParsedPos,'POINTpoint ('); //remove leading spaces and "POINT (" introduction from WKT  
+		$GeoCoord=explode(' ', $ParsedPos); //parse WKT into coordinates
+		$LonField=$GeoCoord[0];
+		$LatField=$GeoCoord[1];	
+	}	
 	//calculate coordinates in map image
-	$LocXCoord=($GeoCoord[0]-$MapFrame[MIN_LON]);
-	$LocYCoord=($MapHeight-($GeoCoord[1]-$MapFrame[MIN_LAT]));
+	$LocXCoord=($LonField - $MapFrame[MIN_LON]);
+	$LocYCoord=($MapHeight - ($LatField - $MapFrame[MIN_LAT]));
 
 
 //draw the clickable point marker:
@@ -218,23 +225,32 @@ echo('</a>');
 		if ($row[$index] != '') varOutput($row[$index],ucfirst($index));
 }
  */
-echo('<p>');
-foreach ($PrintOutFields as $FieldLabel =>$FieldName)
-{	if (is_int($FieldLabel)) $FieldLabel=''; 	
-	if ($row[$FieldName] != '') 
-	{	echo($FieldLabel .' '. $row[$FieldName].'<br>');
+	echo('<p>');
+	foreach ($PrintOutFields as $FieldLabel =>$FieldName)
+	{	
+		if (is_int($FieldLabel)) $FieldLabel=''; 	
+		if ($row[$FieldName] != '') 
+		{	
+			echo($FieldLabel .' '. $row[$FieldName].'<br>');
+		}
 	}
-}
-echo('</p>');
+	echo('</p>');
 
 // In case we want the geographical coordinates printed:
-	if ($ReportGeoCoords) {
-		//extract coordinates from WKT:
-		$ParsedPos=rtrim($row[$WKTGeoField],') '); //remove closing ')' and trailing spaces from Well Known Text
-		$ParsedPos=ltrim($ParsedPos,'POINTpoint ('); //remove leading spaces and "POINT" introduction from WKT
-		$GeoCoord=explode(' ', $ParsedPos);//parse WKT into coordinates
-		echo('Longitude: ' . $GeoCoord[0] . '<br>');
-		echo('Latitude: ' . $GeoCoord[1] . '<br>');
+	if ($ReportGeoCoords) 
+	{
+		if($LatField=="" or $LonField=="")
+		{
+			//extract coordinates from WKT:
+			$ParsedPos=rtrim($row[$WKTGeoField],') '); //remove closing ')' and trailing spaces from Well Known Text
+			$ParsedPos=ltrim($ParsedPos,'POINTpoint ('); //remove leading spaces and "POINT" introduction from WKT
+			$GeoCoord=explode(' ', $ParsedPos);//parse WKT into coordinates
+			$LonField=$GeoCoord[0];
+			$LatField=$GeoCoord[1];
+		}
+
+		echo('Longitude: ' . $LonField . '<br>');
+		echo('Latitude: ' . $LatField . '<br>');
 	}
 
 	echo('</p>');

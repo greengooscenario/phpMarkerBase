@@ -5,58 +5,76 @@
 //
 // General text output
 // -------------------
-//
+
 // Language code for the page:
 $LanguageCode='en';
+
 // Page title:
 $PageTitle='Locator';
+
 // Heading in the page's top:
 $FirstHeading='Find location of';
+
 // Paragraph above the input form:
 $AboveForm='Here you can enter what you are looking for!';
+
 // The input form's prompt:
 $FinderPrompt='Locate:';
+
 // Text on the finder button:
 $FinderButtonText='Find!';
+
 // Paragraph below the input form:
 $BelowForm='';
-//
-//
+
+
 // Names of the accessory files, relative to working directory:
 // ------------------------------------------------------------
-//
+
 // SQLite database file 
-// ((The coordinates in the file must be in "Well Known Text" (WKT) format:
-// 'POINT (8.80906944444444 50.8027944444444 0)'  ))
+// (The coordinates in the file must be in "Well Known Text" (WKT) format 
+// ("POINT (8.80906944444444 50.8027944444444 0)"), 
+// or in the form of two fields for longitude and latitude:)
 $DataBaseFileName='ExampleData-MaNoFestival_2017.sqlite';
-//
-// The database field we search:
-$FieldToSearch='act';
-//
+
 // The table we want to search (will autodetect if not defined):
-//$MyTable='exampledata_manofestival_2017';
-//
-// The database field containing the geographical coordinates (will autodetect or fall back to "WKT_GEOMETRY" if not defined):
+$MyTable='exampledata_manofestival_2017';
+
+// The database field in which the end user searches:
+$FieldToSearch='act';
+
+// The database field(s) containing the geographical coordinates --
+// if $WKTGeoField (with geographical coordinates in "Well Known Text" format) 
+// or $LatField and $LonField are not defined, 
+// the script will try to autodetect, then fall back to 'WKT_GEOMETRY'
+//$LatField='';
+//$LonField='';
 //$WKTGeoField='WKT_GEOMETRY';
-//
+
 // The database fields you want to use as anchor names for map markers and output rows (to make links names more meaningful - leave unset if in doubt):
 //$LinkNameField1='act';
 //$LinkNameField2='time';
-// Additional database fields to print out for each retrieved item (you can define a label by defining a custom key, e.g. ['Label' => 'field name'] -- inexistant field names will throw a notice):
-$PrintOutFields=['Where:'=>'location','When:'=>'time'];
+
+// Additional database fields to print out for each retrieved item 
+// (you can define a label by defining a custom key, e.g. ['Label' => 'field name'] 
+// -- inexistant field names will throw a notice):
 //$PrintOutFields=['location','time'];
+$PrintOutFields=['Where:'=>'location','When:'=>'time'];
+
 // Do you want to report an item's geographical coordinates to the user?
-$ReportGeoCoords=False;
-//
-// Map file:
+$ReportGeoCoords=True;
+
+// Map file -- MapFileName must be in format 
+// "MIN_LAT-MIN_LON-MAX_LAT-MAX_LON-WIDTHINPIXELSxHEIGHTINPIXELS-otherstuff-whatever.extension" !
 $MapFileName='5627715.8274-482913.1466-5629758.5139-485235.8787-1736x1736-epsg25832-ExampleMap.png';
-// MapFileName must be in format "MIN_LAT-MIN_LON-MAX_LAT-MAX_LON-WIDTHINPIXELSxHEIGHTINPIXELS-otherstuff-whatever.extension" !
+
 // Description text for map:
 $MapDescription='This is a sample map!';
-//
+
 error_reporting(E_ALL); // TODO OUTCOMMENT THIS LINE WHEN GOING PUBLIC!
 $debuglvl=1; // TODO SET TO 0 WHEN GOING PUBLIC! 1 will give error messages, 2 is really chatty
-//
+
+
 //                      END OF CONFIGURATION
 /////////////////////////////////////////////////////////////////////////
 ?>
