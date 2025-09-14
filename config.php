@@ -55,22 +55,25 @@ $FieldToSearch='act';
 //$LinkNameField1='act';
 //$LinkNameField2='time';
 
+// Do you want to report an item's geographical coordinates to the user?
+$ReportGeoCoords=True;
+
 // Additional database fields to print out for each retrieved item 
 // (you can define a label by defining a custom key, e.g. ['Label' => 'field name'] 
 // -- inexistant field names will throw a notice):
 //$PrintOutFields=['location','time'];
 $PrintOutFields=['Where:'=>'location','When:'=>'time'];
 
-// Do you want to report an item's geographical coordinates to the user?
-$ReportGeoCoords=True;
-
 // Map file -- MapFileName must be in format 
-// "MIN_LAT-MIN_LON-MAX_LAT-MAX_LON-WIDTHINPIXELSxHEIGHTINPIXELS-otherstuff-whatever.extension" !
+// "MIN_LAT-MIN_LON-MAX_LAT-MAX_LON-WIDTHINPIXELSxHEIGHTINPIXELS-otherstuff-whatever.extension"
+// with the coordinates in decimal format with points as decimal markers.
 $MapFileName='5627715.8274-482913.1466-5629758.5139-485235.8787-1736x1736-epsg25832-ExampleMap.png';
 
 // Description text for map:
 $MapDescription='This is a sample map!';
 
+
+// Debug level:
 error_reporting(E_ALL); // TODO OUTCOMMENT THIS LINE WHEN GOING PUBLIC!
 $debuglvl=1; // TODO SET TO 0 WHEN GOING PUBLIC! 1 will give error messages, 2 is really chatty
 
