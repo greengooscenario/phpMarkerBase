@@ -19,12 +19,24 @@ include("./config.php");
 <?php
 
 //Prepare the Map:
-	$MapFrame=explode('-',$MapFileName);
+	$MapFrame=explode('-',pathinfo($MapFileName, PATHINFO_BASENAME));
 define('MIN_LAT',0); //these serve as indices to the "MapFrame" array
 define('MIN_LON',1);
 define('MAX_LAT',2);
 define('MAX_LON',3);
 define('RESOLUTION',4);
+
+if($debuglvl>1)
+{   
+	echo($MapFileName);	
+	echo(' -- Map borders: ');	
+	echo($MapFrame[0] . ' ');
+	echo($MapFrame[1] . ' ');
+	echo($MapFrame[2] . ' ');
+	echo($MapFrame[3] . ' ');
+	echo($MapFrame[4] . ' ');
+}
+
 $MapWidth = $MapFrame[MAX_LON]-$MapFrame[MIN_LON];
 $MapHeight = $MapFrame[MAX_LAT]-$MapFrame[MIN_LAT];
 $MapResolution=explode('x',$MapFrame[RESOLUTION]);
@@ -168,7 +180,7 @@ if($LatField=="" or $LonField=="")
 
 <svg id="Map" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="700" viewBox="0 0 <?php echo($MapWidth*$MapAspectRa .' '. $MapHeight); ?>" align="top">  
 <desc> <?php $MapDescription; ?> <br> </desc>
-<image x="0" y="0" width="<?php echo($MapWidth*$MapAspectRa);?>" height="<?php echo($MapHeight);?>" xlink:href= <?php echo($MapFileName);?> preserveAspectRation="XMinYMin meet">
+<image x="0" y="0" width="<?php echo($MapWidth*$MapAspectRa);?>" height="<?php echo($MapHeight);?>" xlink:href="<?php echo($MapFileName);?>" preserveAspectRation="XMinYMin meet">
 </image>
 
 <?php
@@ -182,12 +194,33 @@ foreach ($Result as $row)
 		$ParsedPos=rtrim($row[$WKTGeoField],') '); //remove trailing spaces and ')' from WKT 
 		$ParsedPos=ltrim($ParsedPos,'POINTpoint ('); //remove leading spaces and "POINT (" introduction from WKT  
 		$GeoCoord=explode(' ', $ParsedPos); //parse WKT into coordinates
-		$LonField=$GeoCoord[0];
-		$LatField=$GeoCoord[1];	
-	}	
-	//calculate coordinates in map image
-	$LocXCoord=($LonField - $MapFrame[MIN_LON]);
-	$LocYCoord=($MapHeight - ($LatField - $MapFrame[MIN_LAT]));
+		$Lon=$GeoCoord[0];
+		$Lat=$GeoCoord[1];	
+	} else 
+	{	// We have separate fields for latitude and longitude
+		$Lon=$row[$LonField];
+		$Lat=$row[$LatField];
+	}
+
+	if($debuglvl>1) //note: this output is inside the svg-tags and will only be visible in the code inspection mode of your browser!
+	{
+		echo(' $LonField: ');
+		echo($LonField);
+		echo(' $Lon: ');
+		echo($Lon);
+
+	    echo(' $LatField: ');
+        echo($LatField);
+        echo(' $Lat: ');
+		echo($Lat);
+
+		echo(' Border ($MapFrame): ');	
+		echo($MapFrame[MIN_LON] . ' ');
+	}
+
+	//calculate coordinates in map image		
+	$LocXCoord=($Lon - $MapFrame[MIN_LON]);
+	$LocYCoord=($MapHeight - ($Lat - $MapFrame[MIN_LAT]));
 
 
 //draw the clickable point marker:
@@ -245,12 +278,16 @@ echo('</a>');
 			$ParsedPos=rtrim($row[$WKTGeoField],') '); //remove closing ')' and trailing spaces from Well Known Text
 			$ParsedPos=ltrim($ParsedPos,'POINTpoint ('); //remove leading spaces and "POINT" introduction from WKT
 			$GeoCoord=explode(' ', $ParsedPos);//parse WKT into coordinates
-			$LonField=$GeoCoord[0];
-			$LatField=$GeoCoord[1];
+			$Lon=$GeoCoord[0];
+			$Lat=$GeoCoord[1];
+		} else 
+		{	// We have separate fields for latitude and longitude
+			$Lon=$row[$LonField];
+			$Lat=$row[$LatField];
 		}
 
-		echo('Longitude: ' . $LonField . '<br>');
-		echo('Latitude: ' . $LatField . '<br>');
+		echo('Longitude: ' . $Lon . '<br>');
+		echo('Latitude: ' . $Lat . '<br>');
 	}
 
 	echo('</p>');
